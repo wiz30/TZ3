@@ -1,0 +1,26 @@
+---
+- name: Create workdir
+  file:
+          path: "{{ dest }}"
+          state: directory
+          mode: 0755
+
+- name: Copy compose
+  copy:
+          src: "{{ item }}"
+          dest: "{{ dest }}"
+  with_items:
+      - docker-compose.yml
+      - php
+      - nginx
+      - index
+- name: Copy nginx.conf + check changes
+  copy:
+          src: nginx-conf
+          dest: "{{ dest }}"
+  register: nginxContents
+- name: Restart nginx if changes detected
+  command: docker-compose restart nginx
+  args:
+          chdir: "{{ dest }}"
+  when: nginxContents.changed
