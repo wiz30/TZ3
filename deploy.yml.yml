@@ -1,0 +1,11 @@
+---
+- name: Deploy and run
+  hosts: server
+  roles:
+    - copy-project-files
+
+  tasks:
+    - name: Start composing images
+      command: docker-compose up -d
+      args:
+        chdir: /home/server/webapp
